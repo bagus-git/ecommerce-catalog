@@ -1,19 +1,37 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div>
+    <h1>Data Produk</h1>
+    <ul>
+      <!-- setiap objek produk dalam array products akan ditampilkan dalam bentuk elemen list -->
+      <li v-for="product in products" :key="product.id">{{ product.title }} - {{ product.price }}</li>
+    </ul>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-
 export default {
-  name: 'App',
-  components: {
-    HelloWorld
-  }
-}
+  data() {
+    return {
+      products: [],
+    };
+  },
+  mounted() {
+    this.loadProducts();
+  },
+  methods: {
+    async loadProducts() {
+      for (let i = 1; i <= 20; i++) {
+        // untuk mengambil data produk dari API Fake Store
+        const response = await fetch(`https://fakestoreapi.com/products/${i}`);
+        const data = await response.json();
+        // hanya produk dengan kategori yang belum ada di dalam array this.products yang akan ditambahkan ke dalam array
+        if (!this.products.find((p) => p.category === data.category)) {
+          this.products.push(data);
+        }
+      }
+    },
+  },
+};
 </script>
 
 <style>
